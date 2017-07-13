@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="enze's persional blog"><title>像打咏春一样使用Vim | carbin in the wood</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">像打咏春一样使用Vim</h1><a id="logo" href="/.">carbin in the wood</a><p class="description">shut up and code!</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">像打咏春一样使用Vim</h1><div class="post-meta">Apr 30, 2016<script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><div class="post-content"><div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-5334967071a76020.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图片源自网络"><br></div>
+
+<blockquote>
+<h3 id="“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”"><a href="#“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”" class="headerlink" title="“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”"></a><strong>“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”</strong></h3><h3 id="－－电影《师傅》"><a href="#－－电影《师傅》" class="headerlink" title="－－电影《师傅》"></a><strong>－－电影《师傅》</strong></h3></blockquote>
+<p>看过甄子丹演的《叶问》三部曲，陈国坤演的《李小龙传奇》最喜欢廖凡演的《师傅》（台词精炼，耐人寻味）。咏春拳给我的印象是招数简单实用，攻防兼备，常以速度制胜。这跟 Vim 的哲学有异曲同工之妙。甚至觉得有时候用 Vim 编程感觉像练功，没有 IDE 那样繁多的提示和功能，纯粹的写代码。这里总结点儿我平时使用 Vim 的窍门，让你用起 Vim 来像咏春一样快（快速移动光标），狠（疯狂码字），准（准确删除／修改）</p>
+<ul>
+<li>Part1：手指不要轻易离开主键区</li>
+<li>Part2：让光标跟上眼睛</li>
+<li>Part3：Vim 语熟于心</li>
+<li>Part4：常用 Vim 语实战（会持续更新）</li>
+</ul>
+<h1 id="Part1：手指不要轻易离开主健区"><a href="#Part1：手指不要轻易离开主健区" class="headerlink" title="Part1：手指不要轻易离开主健区"></a>Part1：手指不要轻易离开主健区</h1><div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-1724f5ec9048d2d9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="键盘上的主键区（图片源于网络）"><br></div>
+
+<blockquote>
+<p><a href="https://zh.wikipedia.org/wiki/咏春拳#.E9.99.B3.E8.8F.AF.E9.A1.BA" target="_blank" rel="external">咏春：中門論</a> ─人體中門最弱，是攻擊目標，也是重點守護的地方。</p>
+</blockquote>
+<p>要提高使用Vim的效率，在保证功能的情况下，尽量缩小打字的范围，守护我们的“中门”（主键区）。这里有几点建议：</p>
+<ol>
+<li>不用 方向键，用 <code>hjkl</code> （入门基本素养）</li>
+<li>不用 <code>Esc</code>，用 <code>control + [</code></li>
+<li>不用 <code>Back Space</code>，用 <code>x/D/c/C</code> 等</li>
+<li>把键盘上的 <code>Cap Lock</code> 换成 <code>Control</code></li>
+<li>常用<code>ctrl ＋ p</code>或<code> ctrl ＋ n</code>补全输入</li>
+<li>常用<code>.</code>（英文句号）重复上一个命令</li>
+<li>盲打（进阶必备素养）</li>
+<li>用<code>set nu</code>和 <code>set rnu</code> 让行数行距尽收眼底:<br><img src="http://upload-images.jianshu.io/upload_images/1816409-48500c52fc9dbd8a.gif?imageMogr2/auto-orient/strip" alt=":set nu :set rnu"><br><br></li>
+</ol>
+<h1 id="Part2：让光标跟上眼睛"><a href="#Part2：让光标跟上眼睛" class="headerlink" title="Part2：让光标跟上眼睛"></a>Part2：让光标跟上眼睛</h1><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>光标置顶</td>
+<td style="text-align:center"><code>gg</code></td>
+</tr>
+<tr>
+<td>光标至底</td>
+<td style="text-align:center"><code>G </code></td>
+</tr>
+<tr>
+<td>光标至页顶</td>
+<td style="text-align:center"><code>ctrl + h</code></td>
+</tr>
+<tr>
+<td>光标至页底</td>
+<td style="text-align:center"><code>ctrl + m</code></td>
+</tr>
+<tr>
+<td>光标至页中</td>
+<td style="text-align:center"><code>ctrl + l</code></td>
+</tr>
+<tr>
+<td>光标至句首</td>
+<td style="text-align:center"><code>ctrl + ^</code></td>
+</tr>
+<tr>
+<td>光标至句尾</td>
+<td style="text-align:center"><code>ctrl + $</code></td>
+</tr>
+<tr>
+<td>往下翻页</td>
+<td style="text-align:center"><code>ctrl + d</code></td>
+</tr>
+<tr>
+<td>往上翻页</td>
+<td style="text-align:center"><code>ctrl + p</code></td>
+</tr>
+</tbody>
+</table>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-ef3542f581f07dcc.gif?imageMogr2/auto-orient/strip" alt="瞬移光标"><br></div>
+
+<h1 id="Part3：Vim-语熟于心"><a href="#Part3：Vim-语熟于心" class="headerlink" title="Part3：Vim 语熟于心"></a>Part3：Vim 语熟于心</h1><blockquote>
+<p>Vim 语法结构：［数字］＋ 动词 ＋ 介词 ＋ 名词／符号</p>
+<ul>
+<li>数字表示重复命令的次数，省略则表示只执行一次。</li>
+<li>语法结构必须严格遵循：[数字] ＋ 动词 ＋ 介词 ＋ 名词／符号的顺序使用，否则可能没有意义。</li>
+<li>语法是死的，语言是活的，结合具体的情况使用即可使事半功倍。</li>
+</ul>
+</blockquote>
+<h2 id="动词"><a href="#动词" class="headerlink" title="动词"></a>动词</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>删除(delete):</td>
+<td style="text-align:center"><code>d</code></td>
+</tr>
+<tr>
+<td>修改(change):</td>
+<td style="text-align:center"><code>c</code></td>
+</tr>
+<tr>
+<td>复制(yank):</td>
+<td style="text-align:center"><code>y</code></td>
+</tr>
+<tr>
+<td>选取(visual select):</td>
+<td style="text-align:center"><code>v</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>替换（replace）命令是 <code>r</code> 不支持 Vim 语法结构，修改错别责的时候常用，格式是 <code>r</code> + 正确的字母／字符</li>
+</ul>
+<h2 id="介词"><a href="#介词" class="headerlink" title="介词"></a>介词</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>在…之内(inner)</td>
+<td style="text-align:center"><code>i</code></td>
+</tr>
+<tr>
+<td>在…周围(around)</td>
+<td style="text-align:center"><code>a</code></td>
+</tr>
+<tr>
+<td>到…位置前(to)</td>
+<td style="text-align:center"><code>t</code></td>
+</tr>
+<tr>
+<td>到…位置上(forward)</td>
+<td style="text-align:center"><code>f</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>注意：</strong><code>i</code>/<code>a</code>/<code>f</code>在当动词使用的时候分别表示 插入(insert)，增补(append)，查询(find)，然而 <code>t</code> 只有作介词(表示 to) 和符号(表示 tag) 的时候才有意义，请不要混淆了。</li>
+</ul>
+<h2 id="名词"><a href="#名词" class="headerlink" title="名词"></a>名词</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一个单词(word)</td>
+<td style="text-align:center"><code>w</code></td>
+</tr>
+<tr>
+<td>一个句子(sentence)</td>
+<td style="text-align:center"><code>s</code></td>
+</tr>
+<tr>
+<td>一个段落(paragraph)</td>
+<td style="text-align:center"><code>p</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="常用符号"><a href="#常用符号" class="headerlink" title="常用符号"></a>常用符号</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>逗号</td>
+<td style="text-align:center"><code>,</code></td>
+</tr>
+<tr>
+<td>句号</td>
+<td style="text-align:center"><code>.</code></td>
+</tr>
+<tr>
+<td>分号</td>
+<td style="text-align:center"><code>;</code></td>
+</tr>
+<tr>
+<td>一个标签(tag)</td>
+<td style="text-align:center"><code>t</code></td>
+</tr>
+<tr>
+<td>圆括号</td>
+<td style="text-align:center"><code>(</code> 或 <code>)</code></td>
+</tr>
+<tr>
+<td>方括号</td>
+<td style="text-align:center"><code>[</code>或 <code>]</code></td>
+</tr>
+<tr>
+<td>花括号</td>
+<td style="text-align:center"><code>{</code>或 <code>}</code></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<h1 id="Part4：常用-Vim-语实战（会持续更新）"><a href="#Part4：常用-Vim-语实战（会持续更新）" class="headerlink" title="Part4：常用 Vim 语实战（会持续更新）"></a>Part4：常用 Vim 语实战（会持续更新）</h1><h2 id="1-单词／段落"><a href="#1-单词／段落" class="headerlink" title="1. 单词／段落"></a>1. 单词／段落</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">效果</th>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">记忆窍门</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">删除一个单词</td>
+<td style="text-align:center"><code>daw</code></td>
+<td style="text-align:center">delete a word</td>
+</tr>
+<tr>
+<td style="text-align:center">替换一个单词</td>
+<td style="text-align:center"><code>caw</code></td>
+<td style="text-align:center">change a word</td>
+</tr>
+<tr>
+<td style="text-align:center">选取一个单词</td>
+<td style="text-align:center"><code>vaw</code></td>
+<td style="text-align:center">visual-select a word</td>
+</tr>
+<tr>
+<td style="text-align:center">删除一个段落</td>
+<td style="text-align:center"><code>dap</code></td>
+<td style="text-align:center">delete a paragraph</td>
+</tr>
+<tr>
+<td style="text-align:center">替换一个段落</td>
+<td style="text-align:center"><code>cap</code></td>
+<td style="text-align:center">change a paragraph</td>
+</tr>
+<tr>
+<td style="text-align:center">选取一个段落</td>
+<td style="text-align:center"><code>vap</code></td>
+<td style="text-align:center">visual-select a paragraph</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>delete a word</li>
+</ol>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-c65e2ea0edb9d77b.gif?imageMogr2/auto-orient/strip" alt="daw 命令效果"><br></div>
+
+<ol>
+<li><p>change a word</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-5e6bc6f32b361bc8.gif?imageMogr2/auto-orient/strip" alt="caw 命令效果"><br></div>
+</li>
+<li><p>visual-select a word</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-3d8a4e1089a7f143.gif?imageMogr2/auto-orient/strip" alt="vaw 命令效果"><br></div>
+</li>
+<li><p>delete a paragraph</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-da78c24edf01c77d.gif?imageMogr2/auto-orient/strip" alt="dap 命令效果"><br></div>
+</li>
+<li><p>change a paragraph</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-2a466dc3ce0f797b.gif?imageMogr2/auto-orient/strip" alt="cap 命令效果"><br></div>
+
+</li>
+</ol>
+<p>6.visual-select a paragraph</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-b4c27bc6d69a1ab6.gif?imageMogr2/auto-orient/strip" alt="vap 命令效果"><br></div>
+
+<p><strong>想一想：</strong>如果把命令中的 <code>a</code> 换成 <code>i</code> 会有什么不同呢？</p>
+<h2 id="2-程序员常用-Vim-语"><a href="#2-程序员常用-Vim-语" class="headerlink" title="2. 程序员常用 Vim 语"></a>2. 程序员常用 Vim 语</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">效果</th>
+<th style="text-align:center">记忆窍门</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">清除括号里的内容</td>
+<td style="text-align:center"><code>di(/di[/di{</code> 或 <code>di)/di]/di}</code></td>
+<td style="text-align:center">delete inside ()/[]/{}</td>
+</tr>
+<tr>
+<td style="text-align:center">清除整个括号</td>
+<td style="text-align:center"><code>da(/da[/da{</code>或 <code>da)/da]/da}</code></td>
+<td style="text-align:center">delete around ()/[]/{}</td>
+</tr>
+<tr>
+<td style="text-align:center">清除标签里面的内容</td>
+<td style="text-align:center"><code>dit</code></td>
+<td style="text-align:center">delete in tag</td>
+</tr>
+<tr>
+<td style="text-align:center">清除整个标签的内容</td>
+<td style="text-align:center"><code>dat</code></td>
+<td style="text-align:center">delete all tag</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><p>delete inner bracket/tag<br><div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-78566426a4bcefcc.gif?imageMogr2/auto-orient/strip" alt="清除括号／标签里的内容"></div></p>
+<div>
+</div></li>
+<li><p>delete a bracket/tag<br><div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-28f2b2cc1b870b48.gif?imageMogr2/auto-orient/strip" alt="清除整个括号／标签"></div></p>
+<div>
+
+</div></li>
+</ol>
+<p><strong>想一想：</strong>如果要替换括号／标签里面的内容或者替换整个括号／标签应该如何做呢？</p>
+<h3 id="提速策略"><a href="#提速策略" class="headerlink" title="提速策略"></a>提速策略</h3><p>仔细观看上面的实例，你也许会发现，无论在单词／段落／标签的<strong>任意一个位置（首部，中间，结尾）以上命令均可使用</strong>。这意味着你可以放心的使用<strong>Part1 中的第六条建议：常用<code>.</code>（英文句号）重复执行命令</strong>。接下来，你便可以用点点点，来删删删，改改改，有没有像打咏春拳一样的快感？</p>
+<h2 id="3-句子"><a href="#3-句子" class="headerlink" title="3. 句子"></a>3. 句子</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">向后清除到字母／符号的内容</td>
+<td style="text-align:center"><code>df字母／符号</code></td>
+</tr>
+<tr>
+<td style="text-align:center">向前清除到字母／符号的内容</td>
+<td style="text-align:center"><code>dF字母／符号</code></td>
+</tr>
+<tr>
+<td style="text-align:center">向前清除到字母／符号之前的内容</td>
+<td style="text-align:center"><code>dT字母／符号</code></td>
+</tr>
+<tr>
+<td style="text-align:center">向后清除到字母／符号之前的内容</td>
+<td style="text-align:center"><code>dt字母／符号</code></td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://upload-images.jianshu.io/upload_images/1816409-eee1cdc1fd8e0353.gif?imageMogr2/auto-orient/strip" alt="修改句子效果图"></p>
+<p><strong>想一想：</strong>如果把命令中的 <code>d</code> 替换成 <code>v</code> 或者 <code>c</code> 会有什么效果呢？</p>
+<p>当然，在修改句子的时候就不能在任意的地方用 <code>.</code>（英文句号）来重复修改内容了。但是我们依然可以使用 <code>.</code> 来快速到达指定的位置。</p>
+<p>希望这篇文章对于喜欢 Vim 的朋友有帮助，这篇文章只包括了 Vim 从初级到进阶的一部分技巧，大家若有任何意见或建议请多多指教。都看到这儿了，给大家发个福利<a href="http://pdf.th7.cn/down/files/1411/Practical%20Vim.pdf" target="_blank" rel="external">《Vim 实用技巧》高清英文版PDF</a>（中文版我没找着，不嫌弃就收了顺便练练英文吧）感谢大家听我唠叨哈哈，里面有很多实用有趣的实例。下载不了的话可以简信我。</p>
+<p><strong>P.S. 特别感谢：</strong><br>和我一起用 Vim 玩耍的小伙伴 Seven<br><a href="http://www.jianshu.com/users/ca02dbb20a04/latest_articles" target="_blank" rel="external">song4</a> 和他的这篇<a href="http://www.jianshu.com/p/a361ce8c97bc" target="_blank" rel="external">一起来说Vim语</a><br>Drew Neil 的《Vim 实用技巧》</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="http://yoursite.com/2016/04/30/vim-wingchun/" data-id="cj52i98oy0004xvfixui7dt6d" class="article-share-link">分享</a><div class="tags"><a href="/tags/Vim/">Vim</a></div><div class="post-nav"><a href="/2017/07/13/hello-world/" class="pre">Hello World</a><a href="/2016/04/02/mac-powerline/" class="next">用powerline美化你的mac终端</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Unix-Linux/" style="font-size: 15px;">Unix/Linux</a> <a href="/tags/Vim/" style="font-size: 15px;">Vim</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/07/13/hello-world/">Hello World</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/30/vim-wingchun/">像打咏春一样使用Vim</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/02/mac-powerline/">用powerline美化你的mac终端</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2017 <a href="/." rel="nofollow">carbin in the wood.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
