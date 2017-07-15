@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="enze's persional blog"><title>JDBC 编程学习笔记 | carbin in the wood</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">JDBC 编程学习笔记</h1><a id="logo" href="/.">carbin in the wood</a><p class="description">shut up and code!</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/timeline/"><i class="fa fa-hourglass-half"> timeline</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">JDBC 编程学习笔记</h1><div class="post-meta">Jul 15, 2017</div><div class="post-content"><h2 id="SQL语句基础"><a href="#SQL语句基础" class="headerlink" title="SQL语句基础"></a>SQL语句基础</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">语句</th>
+<th style="text-align:center">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">查询语句</td>
+<td style="text-align:center">select</td>
+</tr>
+<tr>
+<td style="text-align:center">DML(Data Manipulation Language)</td>
+<td style="text-align:center">insert, update, delete</td>
+</tr>
+<tr>
+<td style="text-align:center">DDL(Data Definition Language)</td>
+<td style="text-align:center">create, alter, drop, truncate</td>
+</tr>
+<tr>
+<td style="text-align:center">DCL(Data Control Language)</td>
+<td style="text-align:center">grant, revoke</td>
+</tr>
+</tbody>
+</table>
+<h2 id="JDBC-用法"><a href="#JDBC-用法" class="headerlink" title="JDBC 用法"></a>JDBC 用法</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">接口／类</th>
+<th style="text-align:center">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Driver Manager</td>
+<td style="text-align:center">用于管理JDBC驱动</td>
+</tr>
+<tr>
+<td style="text-align:center">Connection</td>
+<td style="text-align:center">数据库连接对象</td>
+</tr>
+<tr>
+<td style="text-align:center">Statement</td>
+<td style="text-align:center">用于执行SQL语句的工具接口</td>
+</tr>
+<tr>
+<td style="text-align:center">PreparedStatement</td>
+<td style="text-align:center">预编译的Statement对象</td>
+</tr>
+<tr>
+<td style="text-align:center">CallableStatement</td>
+<td style="text-align:center">用于调用储存过程</td>
+</tr>
+<tr>
+<td style="text-align:center">ResultSet</td>
+<td style="text-align:center">结果集对象</td>
+</tr>
+</tbody>
+</table>
+<h3 id="JDBC-编程步骤"><a href="#JDBC-编程步骤" class="headerlink" title="JDBC 编程步骤"></a>JDBC 编程步骤</h3><ol>
+<li><p>加载数据库驱动: <code>Class.forName(“com.mysql.jdbc.Driver”);</code></p>
+</li>
+<li><p>通过<code>DriverManager</code>获取数据库连接，获得Connection对象</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jdbc:mysql://hostname:port/databasename</div></pre></td></tr></table></figure>
+<ol>
+<li><p>通过Connection对象创建Statement对象</p>
+</li>
+<li><p>使用Statement对象执行SQL语句</p>
+<ul>
+<li>execute() 可执行任何SQL语句</li>
+<li>executeUpdate() 用于执行DML和DDL语句。在执行DML语句返回受影响行数，执行DDL语句返回0。</li>
+<li>executeQuery() 只执行查询语句，返回ResultSet对象</li>
+</ul>
+</li>
+<li><p>操作结果集</p>
+<ul>
+<li>程序可通过 <code>next()</code>, <code>previous()</code>, <code>first()</code>, <code>last()</code>, <code>beforeFirst()</code>, <code>beforeLast()</code>, <code>afterLast()</code>, <code>absolute()</code>等方法移动记录指针</li>
+<li>通过getXXX(column index)获取记录指针指向行、列的值。</li>
+</ul>
+</li>
+<li><p>回收数据库资源：关闭ResultSet、Statement、Connection等资源。</p>
+</li>
+</ol>
+<h3 id="用Properties类来加载属性文件"><a href="#用Properties类来加载属性文件" class="headerlink" title="用Properties类来加载属性文件"></a>用Properties类来加载属性文件</h3><ol>
+<li>属性文件格式</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">drv = com.mysql.jdbc.Driver</div><div class="line">url = jdbc:mysql://hostname:port/databasename</div><div class="line">usr = username</div><div class="line">pwd = password</div></pre></td></tr></table></figure>
+<p>例如下面的配置建立的连接会占用电脑的5555端口，生成一个people_list数据库的Connection对象，我们把这个配置文件命名为<code>mysql.ini</code>并将其放置在项目的根目录中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">drv = com.mysql.jdbc.Driver</div><div class="line">url = jdbc:mydql://127.0.0.1:5555/people_list</div><div class="line">usr = enzeM</div><div class="line">pwd = 1234567</div></pre></td></tr></table></figure>
+<ol>
+<li>在Java程序中加载属性文件</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> String drv;</div><div class="line"><span class="keyword">private</span> String url;</div><div class="line"><span class="keyword">private</span> String usr;</div><div class="line"><span class="keyword">private</span> String pwd;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">initConnFileds</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">  Properties p = <span class="keyword">new</span> Properties();</div><div class="line">  p.load(<span class="keyword">new</span> FileInputStream(fileName));</div><div class="line">  drv = p.getProperties(<span class="string">"drv"</span>);</div><div class="line">  url = p.getProperties(<span class="string">"url"</span>);</div><div class="line">  usr = p.getProperties(<span class="string">"usr"</span>);</div><div class="line">  pwd = p.getProperties(<span class="string">"pwd"</span>);</div><div class="line">  <span class="comment">//step1: load the database</span></div><div class="line">  Class.forName(<span class="string">"mysql.ini"</span>)  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="通过JDBC实现数据库的基本操作"><a href="#通过JDBC实现数据库的基本操作" class="headerlink" title="通过JDBC实现数据库的基本操作"></a>通过JDBC实现数据库的基本操作</h3><h4 id="用-execute-写一个可以执行任何SQL语句的函数"><a href="#用-execute-写一个可以执行任何SQL语句的函数" class="headerlink" title="用 execute() 写一个可以执行任何SQL语句的函数"></a>用 <code>execute()</code> 写一个可以执行任何SQL语句的函数</h4><blockquote>
+<p>使用情境:</p>
+<ul>
+<li>在<strong>不清楚SQL语句类型</strong>的情况下可以使用。</li>
+<li>使用getString()方法可以取得除Blob之外的任意类型列的值。</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">executeSQL</span><span class="params">(String query)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">  <span class="comment">//step2l get Connection object</span></div><div class="line">  <span class="keyword">try</span>(Connection conn = DriverManager.getConnection(url, usr, pwd);</div><div class="line">    <span class="comment">//step3: get Statement object</span></div><div class="line">    Statement stmt = conn.createStatement()) &#123;</div><div class="line">      <span class="comment">//step4: get ResutSet object</span></div><div class="line">      <span class="keyword">boolean</span> hasResultSet = stmt.execute(query);</div><div class="line">      <span class="keyword">if</span>(hasResultSet) &#123;</div><div class="line">        <span class="keyword">try</span>(ResultSet rs = stmt.getResutSet()) &#123;</div><div class="line">          <span class="comment">//use metadata object to visit all possible info from tables</span></div><div class="line">          ResultSetMetaData rsmd = rs.getMetaData();</div><div class="line">          <span class="keyword">int</span> colunmCount = rsmd.getColumnCount();</div><div class="line"></div><div class="line">          <span class="comment">//print result after execute the query</span></div><div class="line">          <span class="keyword">while</span>(rs.next()) &#123;</div><div class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;colunmCount; i++) &#123;</div><div class="line">              System.out.print(rs.getString(i+<span class="number">1</span>) + <span class="string">"\t"</span>);</div><div class="line">            &#125;</div><div class="line">            System.out.println();</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125; <span class="keyword">else</span> &#123;</div><div class="line">          System.out.println(<span class="string">"this query effect "</span></div><div class="line">            + stmt.getUpdateCount() + <span class="string">" record(s) in the database"</span>);</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码使用<code>execute()</code>来执行SQL语句返回了一个<code>boolean</code>值，它表明SQL是否返回了<code>ResultSet</code>对象。然后程序用<code>getResutSet()</code> 获取<code>Statement</code>执行查询语句后的<code>RsultSet</code>。使用<code>getUpdateCount()</code>获取<code>Statement</code> DML语句所影响的记录行数。</p>
+<h4 id="用PreparedStatement执行SQL语句"><a href="#用PreparedStatement执行SQL语句" class="headerlink" title="用PreparedStatement执行SQL语句"></a>用PreparedStatement执行SQL语句</h4><blockquote>
+<p>使用情境：</p>
+<ul>
+<li>适用于经常需要反复执行的一条语句</li>
+<li>使用占位符<code>?</code>代替需要输入的参数</li>
+<li>预编译SQL语句，性能更好</li>
+<li>防止SQL注入攻击，安全性高</li>
+</ul>
+</blockquote>
+<p>PreparedStatement对象储存了预编译SQL语句，因此可以高效的反复执行该语句。<br>若清楚表格的参数类型，我们可以使用setXXX(int index, XXX value)的方法传入参若<strong>不清楚</strong>表格的参数类型，我们可以使用<code>setObject()</code>的方法传入参数。接下来，我们在数据库里建一个Employees，然后完成：<em>1）加入新的employee record</em>、<em>2）根据ID找出Employee在Table里记录的讯息</em>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Employees (</div><div class="line">  <span class="keyword">ID</span> <span class="built_in">int</span> auto_increment primary <span class="keyword">key</span>,</div><div class="line">  <span class="keyword">Name</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">not</span> <span class="literal">null</span>,</div><div class="line">  Occupation <span class="built_in">varchar</span>(<span class="number">255</span>),</div><div class="line">  Salary <span class="built_in">varchar</span>(<span class="number">255</span>)</div><div class="line">)</div></pre></td></tr></table></figure>
+<ul>
+<li>加入新的employee record</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">insertNewEmployee</span><span class="params">(String name, String occupation, <span class="keyword">int</span> salary)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">  <span class="keyword">try</span>(Connection conn = DriverManager.getConnection(url, usr, pwd);</div><div class="line">    PreparedStatement pstmt = conn.preparedStatement(<span class="string">"INSERT INTO Employee VALUES(null, ?, ?, ?)"</span>)) &#123;</div><div class="line">      <span class="comment">//pstmt.setXXX(index, value)</span></div><div class="line">      pstmt.setString(<span class="number">1</span>, <span class="string">"Tom"</span>);</div><div class="line">      pstmt.setString(<span class="number">2</span>, <span class="string">"Java Enginner"</span>);</div><div class="line">      pstmt.setInt(<span class="number">3</span>, <span class="number">20000</span>);</div><div class="line">      pstmt.executeUpdate();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的index指的是占位符<code>?</code>的位置，跟数组不同的是，<strong>SQL中的index相关的起始位置为1而不是0</strong>，比如column也是从0开始的。上面的代码用<code>PreparedStatement</code>的<code>setXXX()</code>方法添加了新的employee record并且在最后使用<code>executeUpdate()</code>更新了Table, 下面的代码</p>
+<ul>
+<li>根据ID找出Emplee在Table里记录的讯息</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">findEmployeeBy</span><span class="params">(<span class="keyword">int</span> id)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">  <span class="keyword">try</span>(Connection conn = DriverManager.getConnection(url, usr, pwd);</div><div class="line">    PreparedStatement pstmt = conn.preparedStatement(<span class="string">"SELECT * FROM Employee WHERE ID=?"</span>)) &#123;</div><div class="line">      pstmt.setInt(<span class="number">1</span>, id); <span class="comment">//replace ? to id parameter</span></div><div class="line">      ResultSet rs = pstmt.executeQuery(); <span class="comment">//get result set</span></div><div class="line">      <span class="comment">//if we know number of column in the table </span></div><div class="line">      <span class="comment">/*</span></div><div class="line">      if(rs.next()) &#123;</div><div class="line">        for(int i=0; i&lt;4; i++) &#123;</div><div class="line">          System.out.print(rs.getString(i+1)+"\t");</div><div class="line">        &#125;</div><div class="line">        System.out.println();</div><div class="line">      &#125;*/</div><div class="line">      <span class="comment">//if we do not know abut the table, we use metadata</span></div><div class="line">      ResultSetMetaData rsmd = rs.getMetaData();</div><div class="line">      <span class="keyword">int</span> columnCount = rsmd.getColumnCount();</div><div class="line">      <span class="keyword">if</span>(rs.next()) &#123;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;columnCount; i++) &#123;</div><div class="line">          System.out.print(rs.getString(i+<span class="number">1</span>)+<span class="string">"\t"</span>);</div><div class="line">        &#125;</div><div class="line">        System.out.println();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="http://yoursite.com/2017/07/15/jdbc/" data-id="cj55iqj9y0000asfiruqf7gfc" class="article-share-link">分享</a><div class="tags"><a href="/tags/Java/">Java</a></div><div class="post-nav"><a href="/2016/04/30/vim-wingchun/" class="next">像打咏春一样使用Vim</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://yoursite.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Unix-Linux/" style="font-size: 15px;">Unix/Linux</a> <a href="/tags/Vim/" style="font-size: 15px;">Vim</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/07/15/jdbc/">JDBC 编程学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/30/vim-wingchun/">像打咏春一样使用Vim</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/02/mac-powerline/">用powerline美化你的mac终端</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.yinwang.org/" title="王垠博客" target="_blank">王垠博客</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2017 <a href="/." rel="nofollow">carbin in the wood.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
