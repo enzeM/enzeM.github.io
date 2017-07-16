@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+    
+    <entry>
+      <title><![CDATA[JDBC 编程学习笔记]]></title>
+      <url>/2017/07/15/jdbc/</url>
+      <content type="html"><![CDATA[<p>这篇文章是我对李刚老师的《疯狂Java讲义》第三版第十三章：MySQL 数据库与JDBC编程的学习总结。适合有一定SQL基础的同学，如果你还不是很了解SQL，建议去: <a href="https://www.w3schools.com/sql/default.asp" target="_blank" rel="external">w3school</a> 熟悉一下SQL的概念和基本语法。本文更专注于数据库在Java程序中的实践。</p>
+<h2 id="SQL语句基础"><a href="#SQL语句基础" class="headerlink" title="SQL语句基础"></a>SQL语句基础</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">语句</th>
+<th style="text-align:center">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">查询语句</td>
+<td style="text-align:center">select</td>
+</tr>
+<tr>
+<td style="text-align:center">DML(Data Manipulation Language)</td>
+<td style="text-align:center">insert, update, delete</td>
+</tr>
+<tr>
+<td style="text-align:center">DDL(Data Definition Language)</td>
+<td style="text-align:center">create, alter, drop, truncate</td>
+</tr>
+<tr>
+<td style="text-align:center">DCL(Data Control Language)</td>
+<td style="text-align:center">grant, revoke</td>
+</tr>
+</tbody>
+</table>
+<h2 id="JDBC-用法"><a href="#JDBC-用法" class="headerlink" title="JDBC 用法"></a>JDBC 用法</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">接口／类</th>
+<th style="text-align:center">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Driver Manager</td>
+<td style="text-align:center">用于管理JDBC驱动</td>
+</tr>
+<tr>
+<td style="text-align:center">Connection</td>
+<td style="text-align:center">数据库连接对象</td>
+</tr>
+<tr>
+<td style="text-align:center">Statement</td>
+<td style="text-align:center">用于执行SQL语句的工具接口</td>
+</tr>
+<tr>
+<td style="text-align:center">PreparedStatement</td>
+<td style="text-align:center">预编译的Statement对象</td>
+</tr>
+<tr>
+<td style="text-align:center">CallableStatement</td>
+<td style="text-align:center">用于调用储存过程</td>
+</tr>
+<tr>
+<td style="text-align:center">ResultSet</td>
+<td style="text-align:center">结果集对象</td>
+</tr>
+</tbody>
+</table>
+<h2 id="JDBC-编程步骤"><a href="#JDBC-编程步骤" class="headerlink" title="JDBC 编程步骤"></a>JDBC 编程步骤</h2><ol>
+<li><p>加载数据库驱动: <code>Class.forName(“com.mysql.jdbc.Driver”);</code></p>
+</li>
+<li><p>通过<code>DriverManager</code>获取数据库连接，获得<code>Connection</code>对象：</p>
+</li>
+</ol>
+<p><code>jdbc:mysql://hostname:port/databasename</code></p>
+<ol>
+<li><p>通过Connection对象创建Statement对象</p>
+</li>
+<li><p>使用Statement对象执行SQL语句</p>
+<ul>
+<li>execute() 可执行任何SQL语句</li>
+<li>executeUpdate() 用于执行DML和DDL语句。在执行DML语句返回受影响行数，执行DDL语句返回0。</li>
+<li>executeQuery() 只执行查询语句，返回ResultSet对象</li>
+</ul>
+</li>
+<li><p>操作结果集</p>
+<ul>
+<li>程序可通过 <code>next()</code>, <code>previous()</code>, <code>first()</code>, <code>last()</code>, <code>beforeFirst()</code>, <code>beforeLast()</code>, <code>afterLast()</code>, <code>absolute()</code>等方法移动记录指针</li>
+<li>通过<code>getXXX(column index)</code>获取记录指针指向行、列的值。</li>
+</ul>
+</li>
+<li><p>回收数据库资源：关闭ResultSet、Statement、Connection等资源。</p>
+</li>
+</ol>
+<h3 id="1-用Properties类来加载属性文件"><a href="#1-用Properties类来加载属性文件" class="headerlink" title="1. 用Properties类来加载属性文件"></a>1. 用Properties类来加载属性文件</h3><h4 id="1-属性文件格式"><a href="#1-属性文件格式" class="headerlink" title="1. 属性文件格式"></a>1. 属性文件格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">drv = com.mysql.jdbc.Driver</div><div class="line">url = jdbc:mysql://hostname:port/databasename</div><div class="line">usr = username</div><div class="line">pwd = password</div></pre></td></tr></table></figure>
+<p>例如下面的配置建立的连接会占用电脑的5555端口，生成一个people_list数据库的<code>Connection</code>对象，我们把这个配置文件命名为<code>mysql.ini</code>并将其放置在项目的根目录中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">drv = com.mysql.jdbc.Driver</div><div class="line">url = jdbc:mydql://127.0.0.1:5555/people_list</div><div class="line">usr = enzeM</div><div class="line">pwd = 1234567</div></pre></td></tr></table></figure>
+<h4 id="2-在Java程序中加载属性文件"><a href="#2-在Java程序中加载属性文件" class="headerlink" title="2. 在Java程序中加载属性文件"></a>2. 在Java程序中加载属性文件</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> String drv;</div><div class="line"><span class="keyword">private</span> String url;</div><div class="line"><span class="keyword">private</span> String usr;</div><div class="line"><span class="keyword">private</span> String pwd;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">initConnFileds</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">	Properties p = <span class="keyword">new</span> Properties();</div><div class="line">	p.load(<span class="keyword">new</span> FileInputStream(fileName));</div><div class="line">	drv = p.getProperties(<span class="string">"drv"</span>);</div><div class="line">	url = p.getProperties(<span class="string">"url"</span>);</div><div class="line">	usr = p.getProperties(<span class="string">"usr"</span>);</div><div class="line">	pwd = p.getProperties(<span class="string">"pwd"</span>);</div><div class="line">	<span class="comment">//step1: load the database</span></div><div class="line">	Class.forName(<span class="string">"mysql.ini"</span>)  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="2-通过JDBC实现数据库的基本操作"><a href="#2-通过JDBC实现数据库的基本操作" class="headerlink" title="2. 通过JDBC实现数据库的基本操作"></a>2. 通过JDBC实现数据库的基本操作</h3><h4 id="2-1-用Statement和execute-写一个可以执行任何SQL语句的函数"><a href="#2-1-用Statement和execute-写一个可以执行任何SQL语句的函数" class="headerlink" title="2.1 用Statement和execute() 写一个可以执行任何SQL语句的函数"></a>2.1 用Statement和<code>execute()</code> 写一个可以执行任何SQL语句的函数</h4><blockquote>
+<p>使用情境:</p>
+<ul>
+<li>在<strong>不清楚SQL语句类型</strong>的情况下可以使用。</li>
+<li>使用getString()方法可以取得除Blob之外的任意类型列的值。</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">executeSQL</span><span class="params">(String query)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">	<span class="comment">//step2l get Connection object</span></div><div class="line">	<span class="keyword">try</span>(Connection conn = DriverManager.getConnection(url, usr, pwd); </div><div class="line">		Statement stmt = conn.createStatement()) &#123;<span class="comment">//step3: get Statement object</span></div><div class="line">		<span class="comment">//step4: get ResutSet object</span></div><div class="line">		<span class="keyword">boolean</span> hasResultSet = stmt.execute(query);</div><div class="line">		<span class="keyword">if</span>(hasResultSet) &#123;</div><div class="line">			<span class="keyword">try</span>(ResultSet rs = stmt.getResutSet()) &#123;</div><div class="line">				<span class="comment">//use metadata object to visit all possible info from tables</span></div><div class="line">				ResultSetMetaData rsmd = rs.getMetaData();</div><div class="line">				<span class="keyword">int</span> colunmCount = rsmd.getColumnCount();</div><div class="line"></div><div class="line">				<span class="comment">//print result after execute the query</span></div><div class="line">				<span class="keyword">while</span>(rs.next()) &#123;</div><div class="line">					<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;colunmCount; i++) &#123;</div><div class="line">						System.out.print(rs.getString(i+<span class="number">1</span>) + <span class="string">"\t"</span>);</div><div class="line">					&#125;</div><div class="line">					System.out.println();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			System.out.println(<span class="string">"this query effect "</span></div><div class="line">					+ stmt.getUpdateCount() + <span class="string">" record(s) in the database"</span>);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码使用<code>execute()</code>来执行SQL语句返回了一个<code>boolean</code>值，它表明SQL是否返回了<code>ResultSet</code>对象。然后程序用<code>getResutSet()</code> 获取<code>Statement</code>执行查询语句后的<code>RsultSet</code>。使用<code>getUpdateCount()</code>获取<code>Statement</code> DML语句所影响的记录行数。</p>
+<h4 id="2-2-用PreparedStatement执行SQL语句"><a href="#2-2-用PreparedStatement执行SQL语句" class="headerlink" title="2.2 用PreparedStatement执行SQL语句"></a>2.2 用PreparedStatement执行SQL语句</h4><blockquote>
+<p>使用情境：</p>
+<ul>
+<li>适用于经常需要反复执行的一条语句</li>
+<li>使用占位符<code>?</code>代替需要输入的参数</li>
+<li>预编译SQL语句，性能更好</li>
+<li>防止SQL注入攻击，安全性高</li>
+</ul>
+</blockquote>
+<p>PreparedStatement对象储存了预编译SQL语句，因此可以高效的反复执行该语句。<br>若清楚表格的参数类型，我们可以使用setXXX(int index, XXX value)的方法传入参若<strong>不清楚</strong>表格的参数类型，我们可以使用<code>setObject()</code>的方法传入参数。接下来，我们在数据库里建一个Employees，然后完成：<em>1）加入新的employee record</em>、<em>2）根据ID找出Employee在Table里记录的讯息</em>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Employees (</div><div class="line">	<span class="keyword">ID</span> <span class="built_in">INT</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</div><div class="line">	<span class="keyword">Name</span> <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">	Occupation <span class="built_in">VARCHAR</span>(<span class="number">255</span>),</div><div class="line">	Salary <span class="built_in">VARCHAR</span>(<span class="number">255</span>)</div><div class="line">)</div></pre></td></tr></table></figure>
+<ul>
+<li><em>加入新的employee record:</em></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">insertNewEmployee</span><span class="params">(String name, String occupation, <span class="keyword">int</span> salary)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">	<span class="keyword">try</span>(Connection conn = DriverManager.getConnection(url, usr, pwd); </div><div class="line">		PreparedStatement pstmt = conn.preparedStatement(<span class="string">"INSERT INTO Employee VALUES(null, ?, ?, ?)"</span>)) &#123;</div><div class="line">		<span class="comment">//pstmt.setXXX(index, value)</span></div><div class="line">		pstmt.setString(<span class="number">1</span>, <span class="string">"Tom"</span>);</div><div class="line">		pstmt.setString(<span class="number">2</span>, <span class="string">"Java Enginner"</span>);</div><div class="line">		pstmt.setInt(<span class="number">3</span>, <span class="number">20000</span>);</div><div class="line">		pstmt.executeUpdate();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里的index指的是占位符<code>?</code>的位置，跟数组不同的是，<strong>SQL中的index相关的起始位置为1而不是0</strong>，比如column也是从0开始的。上面的代码用<code>PreparedStatement</code>的<code>setXXX()</code>方法添加了新的employee record并且在最后使用<code>executeUpdate()</code>更新了Table, 下面的代码实现了根据ID找出Employee在数据库里面的讯息</p>
+<ul>
+<li><em>根据ID找出Employee在Table里记录的讯息:</em></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">findEmployeeBy</span><span class="params">(<span class="keyword">int</span> id)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">	<span class="keyword">try</span>(Connection conn = DriverManager.getConnection(url, usr, pwd);</div><div class="line">			PreparedStatement pstmt = conn.preparedStatement(<span class="string">"SELECT * FROM Employee WHERE ID=?"</span>)) &#123;</div><div class="line">		pstmt.setInt(<span class="number">1</span>, id); <span class="comment">//replace ? to id parameter</span></div><div class="line">		ResultSet rs = pstmt.executeQuery(); <span class="comment">//get result set</span></div><div class="line">		<span class="comment">//if we know number of column in the table </span></div><div class="line">		<span class="comment">/*</span></div><div class="line">		   if(rs.next()) &#123;</div><div class="line">		   for(int i=0; i&lt;4; i++) &#123;</div><div class="line">		   System.out.print(rs.getString(i+1)+"\t");</div><div class="line">		   &#125;</div><div class="line">		   System.out.println();</div><div class="line">		   &#125;*/</div><div class="line">		<span class="comment">//if we do not know abut the table, we use metadata</span></div><div class="line">		ResultSetMetaData rsmd = rs.getMetaData();</div><div class="line">		<span class="keyword">int</span> columnCount = rsmd.getColumnCount();</div><div class="line">		<span class="keyword">if</span>(rs.next()) &#123;</div><div class="line">			<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;columnCount; i++) &#123;</div><div class="line">				System.out.print(rs.getString(i+<span class="number">1</span>)+<span class="string">"\t"</span>);</div><div class="line">			&#125;</div><div class="line">			System.out.println();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="2-3-用CallableStatement调用储存过程（Procedure）"><a href="#2-3-用CallableStatement调用储存过程（Procedure）" class="headerlink" title="2.3 用CallableStatement调用储存过程（Procedure）"></a>2.3 用CallableStatement调用储存过程（Procedure）</h4><blockquote>
+<p>使用场景：</p>
+<ul>
+<li>需要调用数据库中定义的procedure来处理数据</li>
+</ul>
+</blockquote>
+<p>例子：建立一个<a href="https://dev.mysql.com/doc/refman/5.7/en/create-procedure.html" target="_blank" rel="external">储存过程</a>:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> diff_salary(a <span class="built_in">int</span>, b <span class="built_in">int</span>, <span class="keyword">out</span> diff <span class="built_in">int</span>)</div><div class="line"></div><div class="line"><span class="keyword">begin</span></div><div class="line"><span class="keyword">set</span> diff = <span class="keyword">abs</span>(a - b)</div><div class="line"><span class="keyword">end</span>;</div></pre></td></tr></table></figure>
+<p>以上例子在数据库里定义了一个procedure diff_salary 来计算两个input的差值。我们要通过程序调用这个procedure，需要使用<code>CallableStatement</code>，以下是具体步骤：</p>
+<ul>
+<li><em>使用CallableStatement调用procedure:</em></li>
+</ul>
+<ol>
+<li>用<code>Connection</code>对象的<code>prepareCall()</code>方法生成<code>CallableStatement</code>对象</li>
+<li>用<code>CallableStatment</code>的<code>setXXX()</code>为procedure传入参数</li>
+<li>用<code>rigisterOutParameter()</code>的方法来注册获取储存过程的值</li>
+<li>用<code>CallStatement</code>的<code>execute()</code>方法来执行储存过程</li>
+<li>用<code>getXXX(int index)</code>获取指定参数的值</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">callDiffSalaryProc</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">	<span class="keyword">try</span>(Connection conn = DriverManager.getConnection(url, usr, pwd); </div><div class="line">			CallableStatment cstmt = conn.prepareCall(<span class="string">"&#123;call diff_salary(?, ?, ?)&#125;"</span>)) &#123; <span class="comment">//注意这里使用的格式</span></div><div class="line">		cstmt.setInt(<span class="number">1</span>, a);</div><div class="line">		cstmt.setInt(<span class="number">2</span>, b);</div><div class="line">		cstmt.registerOutParameter(<span class="number">3</span>, TYPE.INTEGER);</div><div class="line">		cstmt.execute();</div><div class="line">		System.out.println(<span class="string">"result is:"</span>+cstmt.getInt(<span class="number">3</span>));</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="管理结果集-to-be-continue"><a href="#管理结果集-to-be-continue" class="headerlink" title="管理结果集(to be continue)"></a>管理结果集(to be continue)</h3>]]></content>
+      
+        <categories>
+            
+            <category> Programming </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Java </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[像打咏春一样使用Vim]]></title>
+      <url>/2016/04/30/vim-wingchun/</url>
+      <content type="html"><![CDATA[<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-5334967071a76020.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图片源自网络"><br></div>
+
+<blockquote>
+<h3 id="“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”"><a href="#“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”" class="headerlink" title="“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”"></a><strong>“我学功夫，从15岁开始，每天挥刀500下，这个数管住了我。从今天起，我以你为约束。”</strong></h3><h3 id="－－电影《师傅》"><a href="#－－电影《师傅》" class="headerlink" title="－－电影《师傅》"></a><strong>－－电影《师傅》</strong></h3></blockquote>
+<p>看过甄子丹演的《叶问》三部曲，陈国坤演的《李小龙传奇》最喜欢廖凡演的《师傅》（台词精炼，耐人寻味）。咏春拳给我的印象是招数简单实用，攻防兼备，常以速度制胜。这跟 Vim 的哲学有异曲同工之妙。甚至觉得有时候用 Vim 编程感觉像练功，没有 IDE 那样繁多的提示和功能，纯粹的写代码。这里总结点儿我平时使用 Vim 的窍门，让你用起 Vim 来像咏春一样快（快速移动光标），狠（疯狂码字），准（准确删除／修改）</p>
+<ul>
+<li>Part1：手指不要轻易离开主键区</li>
+<li>Part2：让光标跟上眼睛</li>
+<li>Part3：Vim 语熟于心</li>
+<li>Part4：常用 Vim 语实战（会持续更新）</li>
+</ul>
+<h1 id="Part1：手指不要轻易离开主健区"><a href="#Part1：手指不要轻易离开主健区" class="headerlink" title="Part1：手指不要轻易离开主健区"></a>Part1：手指不要轻易离开主健区</h1><div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-1724f5ec9048d2d9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="键盘上的主键区（图片源于网络）"><br></div>
+
+<blockquote>
+<p><a href="https://zh.wikipedia.org/wiki/咏春拳#.E9.99.B3.E8.8F.AF.E9.A1.BA" target="_blank" rel="external">咏春：中門論</a> ─人體中門最弱，是攻擊目標，也是重點守護的地方。</p>
+</blockquote>
+<p>要提高使用Vim的效率，在保证功能的情况下，尽量缩小打字的范围，守护我们的“中门”（主键区）。这里有几点建议：</p>
+<ol>
+<li>不用 方向键，用 <code>hjkl</code> （入门基本素养）</li>
+<li>不用 <code>Esc</code>，用 <code>control + [</code></li>
+<li>不用 <code>Back Space</code>，用 <code>x/D/c/C</code> 等</li>
+<li>把键盘上的 <code>Cap Lock</code> 换成 <code>Control</code></li>
+<li>常用<code>ctrl ＋ p</code>或<code> ctrl ＋ n</code>补全输入</li>
+<li>常用<code>.</code>（英文句号）重复上一个命令</li>
+<li>盲打（进阶必备素养）</li>
+<li>用<code>set nu</code>和 <code>set rnu</code> 让行数行距尽收眼底:<br><img src="http://upload-images.jianshu.io/upload_images/1816409-48500c52fc9dbd8a.gif?imageMogr2/auto-orient/strip" alt=":set nu :set rnu"><br><br></li>
+</ol>
+<h1 id="Part2：让光标跟上眼睛"><a href="#Part2：让光标跟上眼睛" class="headerlink" title="Part2：让光标跟上眼睛"></a>Part2：让光标跟上眼睛</h1><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>光标置顶</td>
+<td style="text-align:center"><code>gg</code></td>
+</tr>
+<tr>
+<td>光标至底</td>
+<td style="text-align:center"><code>G </code></td>
+</tr>
+<tr>
+<td>光标至页顶</td>
+<td style="text-align:center"><code>ctrl + h</code></td>
+</tr>
+<tr>
+<td>光标至页底</td>
+<td style="text-align:center"><code>ctrl + m</code></td>
+</tr>
+<tr>
+<td>光标至页中</td>
+<td style="text-align:center"><code>ctrl + l</code></td>
+</tr>
+<tr>
+<td>光标至句首</td>
+<td style="text-align:center"><code>ctrl + ^</code></td>
+</tr>
+<tr>
+<td>光标至句尾</td>
+<td style="text-align:center"><code>ctrl + $</code></td>
+</tr>
+<tr>
+<td>往下翻页</td>
+<td style="text-align:center"><code>ctrl + d</code></td>
+</tr>
+<tr>
+<td>往上翻页</td>
+<td style="text-align:center"><code>ctrl + p</code></td>
+</tr>
+</tbody>
+</table>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-ef3542f581f07dcc.gif?imageMogr2/auto-orient/strip" alt="瞬移光标"><br></div>
+
+<h1 id="Part3：Vim-语熟于心"><a href="#Part3：Vim-语熟于心" class="headerlink" title="Part3：Vim 语熟于心"></a>Part3：Vim 语熟于心</h1><blockquote>
+<p>Vim 语法结构：［数字］＋ 动词 ＋ 介词 ＋ 名词／符号</p>
+<ul>
+<li>数字表示重复命令的次数，省略则表示只执行一次。</li>
+<li>语法结构必须严格遵循：[数字] ＋ 动词 ＋ 介词 ＋ 名词／符号的顺序使用，否则可能没有意义。</li>
+<li>语法是死的，语言是活的，结合具体的情况使用即可使事半功倍。</li>
+</ul>
+</blockquote>
+<h2 id="动词"><a href="#动词" class="headerlink" title="动词"></a>动词</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>删除(delete):</td>
+<td style="text-align:center"><code>d</code></td>
+</tr>
+<tr>
+<td>修改(change):</td>
+<td style="text-align:center"><code>c</code></td>
+</tr>
+<tr>
+<td>复制(yank):</td>
+<td style="text-align:center"><code>y</code></td>
+</tr>
+<tr>
+<td>选取(visual select):</td>
+<td style="text-align:center"><code>v</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>替换（replace）命令是 <code>r</code> 不支持 Vim 语法结构，修改错别责的时候常用，格式是 <code>r</code> + 正确的字母／字符</li>
+</ul>
+<h2 id="介词"><a href="#介词" class="headerlink" title="介词"></a>介词</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>在…之内(inner)</td>
+<td style="text-align:center"><code>i</code></td>
+</tr>
+<tr>
+<td>在…周围(around)</td>
+<td style="text-align:center"><code>a</code></td>
+</tr>
+<tr>
+<td>到…位置前(to)</td>
+<td style="text-align:center"><code>t</code></td>
+</tr>
+<tr>
+<td>到…位置上(forward)</td>
+<td style="text-align:center"><code>f</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>注意：</strong><code>i</code>/<code>a</code>/<code>f</code>在当动词使用的时候分别表示 插入(insert)，增补(append)，查询(find)，然而 <code>t</code> 只有作介词(表示 to) 和符号(表示 tag) 的时候才有意义，请不要混淆了。</li>
+</ul>
+<h2 id="名词"><a href="#名词" class="headerlink" title="名词"></a>名词</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一个单词(word)</td>
+<td style="text-align:center"><code>w</code></td>
+</tr>
+<tr>
+<td>一个句子(sentence)</td>
+<td style="text-align:center"><code>s</code></td>
+</tr>
+<tr>
+<td>一个段落(paragraph)</td>
+<td style="text-align:center"><code>p</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="常用符号"><a href="#常用符号" class="headerlink" title="常用符号"></a>常用符号</h2><table>
+<thead>
+<tr>
+<th>效果</th>
+<th style="text-align:center">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>逗号</td>
+<td style="text-align:center"><code>,</code></td>
+</tr>
+<tr>
+<td>句号</td>
+<td style="text-align:center"><code>.</code></td>
+</tr>
+<tr>
+<td>分号</td>
+<td style="text-align:center"><code>;</code></td>
+</tr>
+<tr>
+<td>一个标签(tag)</td>
+<td style="text-align:center"><code>t</code></td>
+</tr>
+<tr>
+<td>圆括号</td>
+<td style="text-align:center"><code>(</code> 或 <code>)</code></td>
+</tr>
+<tr>
+<td>方括号</td>
+<td style="text-align:center"><code>[</code>或 <code>]</code></td>
+</tr>
+<tr>
+<td>花括号</td>
+<td style="text-align:center"><code>{</code>或 <code>}</code></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<h1 id="Part4：常用-Vim-语实战（会持续更新）"><a href="#Part4：常用-Vim-语实战（会持续更新）" class="headerlink" title="Part4：常用 Vim 语实战（会持续更新）"></a>Part4：常用 Vim 语实战（会持续更新）</h1><h2 id="1-单词／段落"><a href="#1-单词／段落" class="headerlink" title="1. 单词／段落"></a>1. 单词／段落</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">效果</th>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">记忆窍门</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">删除一个单词</td>
+<td style="text-align:center"><code>daw</code></td>
+<td style="text-align:center">delete a word</td>
+</tr>
+<tr>
+<td style="text-align:center">替换一个单词</td>
+<td style="text-align:center"><code>caw</code></td>
+<td style="text-align:center">change a word</td>
+</tr>
+<tr>
+<td style="text-align:center">选取一个单词</td>
+<td style="text-align:center"><code>vaw</code></td>
+<td style="text-align:center">visual-select a word</td>
+</tr>
+<tr>
+<td style="text-align:center">删除一个段落</td>
+<td style="text-align:center"><code>dap</code></td>
+<td style="text-align:center">delete a paragraph</td>
+</tr>
+<tr>
+<td style="text-align:center">替换一个段落</td>
+<td style="text-align:center"><code>cap</code></td>
+<td style="text-align:center">change a paragraph</td>
+</tr>
+<tr>
+<td style="text-align:center">选取一个段落</td>
+<td style="text-align:center"><code>vap</code></td>
+<td style="text-align:center">visual-select a paragraph</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>delete a word</li>
+</ol>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-c65e2ea0edb9d77b.gif?imageMogr2/auto-orient/strip" alt="daw 命令效果"><br></div>
+
+<ol>
+<li><p>change a word</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-5e6bc6f32b361bc8.gif?imageMogr2/auto-orient/strip" alt="caw 命令效果"><br></div>
+</li>
+<li><p>visual-select a word</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-3d8a4e1089a7f143.gif?imageMogr2/auto-orient/strip" alt="vaw 命令效果"><br></div>
+</li>
+<li><p>delete a paragraph</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-da78c24edf01c77d.gif?imageMogr2/auto-orient/strip" alt="dap 命令效果"><br></div>
+</li>
+<li><p>change a paragraph</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-2a466dc3ce0f797b.gif?imageMogr2/auto-orient/strip" alt="cap 命令效果"><br></div>
+
+</li>
+</ol>
+<p>6.visual-select a paragraph</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-b4c27bc6d69a1ab6.gif?imageMogr2/auto-orient/strip" alt="vap 命令效果"><br></div>
+
+<p><strong>想一想：</strong>如果把命令中的 <code>a</code> 换成 <code>i</code> 会有什么不同呢？</p>
+<h2 id="2-程序员常用-Vim-语"><a href="#2-程序员常用-Vim-语" class="headerlink" title="2. 程序员常用 Vim 语"></a>2. 程序员常用 Vim 语</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">效果</th>
+<th style="text-align:center">记忆窍门</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">清除括号里的内容</td>
+<td style="text-align:center"><code>di(/di[/di{</code> 或 <code>di)/di]/di}</code></td>
+<td style="text-align:center">delete inside ()/[]/{}</td>
+</tr>
+<tr>
+<td style="text-align:center">清除整个括号</td>
+<td style="text-align:center"><code>da(/da[/da{</code>或 <code>da)/da]/da}</code></td>
+<td style="text-align:center">delete around ()/[]/{}</td>
+</tr>
+<tr>
+<td style="text-align:center">清除标签里面的内容</td>
+<td style="text-align:center"><code>dit</code></td>
+<td style="text-align:center">delete in tag</td>
+</tr>
+<tr>
+<td style="text-align:center">清除整个标签的内容</td>
+<td style="text-align:center"><code>dat</code></td>
+<td style="text-align:center">delete all tag</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><p>delete inner bracket/tag<br><div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-78566426a4bcefcc.gif?imageMogr2/auto-orient/strip" alt="清除括号／标签里的内容"></div></p>
+<div>
+</div></li>
+<li><p>delete a bracket/tag<br><div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-28f2b2cc1b870b48.gif?imageMogr2/auto-orient/strip" alt="清除整个括号／标签"></div></p>
+<div>
+
+</div></li>
+</ol>
+<p><strong>想一想：</strong>如果要替换括号／标签里面的内容或者替换整个括号／标签应该如何做呢？</p>
+<h3 id="提速策略"><a href="#提速策略" class="headerlink" title="提速策略"></a>提速策略</h3><p>仔细观看上面的实例，你也许会发现，无论在单词／段落／标签的<strong>任意一个位置（首部，中间，结尾）以上命令均可使用</strong>。这意味着你可以放心的使用<strong>Part1 中的第六条建议：常用<code>.</code>（英文句号）重复执行命令</strong>。接下来，你便可以用点点点，来删删删，改改改，有没有像打咏春拳一样的快感？</p>
+<h2 id="3-句子"><a href="#3-句子" class="headerlink" title="3. 句子"></a>3. 句子</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">向后清除到字母／符号的内容</td>
+<td style="text-align:center"><code>df字母／符号</code></td>
+</tr>
+<tr>
+<td style="text-align:center">向前清除到字母／符号的内容</td>
+<td style="text-align:center"><code>dF字母／符号</code></td>
+</tr>
+<tr>
+<td style="text-align:center">向前清除到字母／符号之前的内容</td>
+<td style="text-align:center"><code>dT字母／符号</code></td>
+</tr>
+<tr>
+<td style="text-align:center">向后清除到字母／符号之前的内容</td>
+<td style="text-align:center"><code>dt字母／符号</code></td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://upload-images.jianshu.io/upload_images/1816409-eee1cdc1fd8e0353.gif?imageMogr2/auto-orient/strip" alt="修改句子效果图"></p>
+<p><strong>想一想：</strong>如果把命令中的 <code>d</code> 替换成 <code>v</code> 或者 <code>c</code> 会有什么效果呢？</p>
+<p>当然，在修改句子的时候就不能在任意的地方用 <code>.</code>（英文句号）来重复修改内容了。但是我们依然可以使用 <code>.</code> 来快速到达指定的位置。</p>
+<p>希望这篇文章对于喜欢 Vim 的朋友有帮助，这篇文章只包括了 Vim 从初级到进阶的一部分技巧，大家若有任何意见或建议请多多指教。都看到这儿了，给大家发个福利<a href="http://pdf.th7.cn/down/files/1411/Practical%20Vim.pdf" target="_blank" rel="external">《Vim 实用技巧》高清英文版PDF</a>（中文版我没找着，不嫌弃就收了顺便练练英文吧）感谢大家听我唠叨哈哈，里面有很多实用有趣的实例。下载不了的话可以简信我。</p>
+<p><strong>P.S. 特别感谢：</strong><br>和我一起用 Vim 玩耍的小伙伴 Seven<br><a href="http://www.jianshu.com/users/ca02dbb20a04/latest_articles" target="_blank" rel="external">song4</a> 和他的这篇<a href="http://www.jianshu.com/p/a361ce8c97bc" target="_blank" rel="external">一起来说Vim语</a><br>Drew Neil 的《Vim 实用技巧》</p>
+]]></content>
+      
+        <categories>
+            
+            <category> Unix/Linux </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Vim </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[用Powerline美化你的mac终端]]></title>
+      <url>/2016/04/02/mac-powerline/</url>
+      <content type="html"><![CDATA[<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-70951021c362540a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Powerline 效果图1"><br></div>
+
+<p>我用 Mac 编程，平时用 vim 作为编辑器写代码。时间长了，觉得终端和 vim 的主题单调了点儿，从哥们儿 Seven 那儿知道了 Powerline 这个用 Python 写的脚本可以美化终端，于是便安装着试试，结果倒是碰了不少壁。最后还是从 Seven 那知道了 Powerline 有效的安装方法，在此特别鸣谢，也决定向用 Mac 的朋友们分享一下。好啦废话不说，先秀一张Powerline 效果图，然后看看我是怎么做的吧。</p>
+<hr>
+<h4 id="第一步：安装Python-2-X"><a href="#第一步：安装Python-2-X" class="headerlink" title="第一步：安装Python 2.X"></a>第一步：安装Python 2.X</h4><p>因为 Powerline 是用 Python 写的脚本，所以我们必须确保在安装 Powerline 我们的 Mac 里面已经安装了  Python（一般来说 Mac 会自带 Python 2.X）我们可以在终端里面输入下面的代码来检查 Python 版本，若此命令没有返回任何讯息说明你的 Mac 里面没有安装 Python。</p>
+<p><code>python -V </code></p>
+<p>你可以通过 <strong>Homebrew (brew)</strong> 在终端里面安装Python，在终端输入下面的代码（若你的终端里面没有安装 brew, 点此链接：<a href="http://brew.sh/" target="_blank" rel="external">Homebrew</a> ）<br><code>brew install python</code></p>
+<h4 id="第二步：下载Powerline"><a href="#第二步：下载Powerline" class="headerlink" title="第二步：下载Powerline"></a>第二步：下载Powerline</h4><p>安装 Powerline 的方法有很多种，我们可以通过 pip 或者 git 等工具，<strong>我推荐使用 pip 并且将其安装在根目录下 （也就是 /usr/ 目录中）</strong><br>需要注意的是在安装之前我们要检查是否自己已经安装过了 Powerline （我就是那种有时候自己都不知道在电脑里装了什么的人）我们可以使用命令：</p>
+<p><code>pip show powerline-status</code></p>
+<p>如果没安装的话就不会弹出任何相关的讯息，倘若已经安装好了，会出现类似于下面的软件描述讯息：</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-593e328f07c6ebf7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Powerline 描述讯息"><br></div>
+
+<p>当然，如果你已经安装了，却无法使用或者激活建议使用下面的命令来删除已安装的 Powerline：（<strong>P.S.</strong> 删除之后记得再用 <code><strong>pip show powerline-status</strong></code> 检查一下是否成功删除了或者还有没有残留的其他版本。）</p>
+<p><code>pip uninstall powerline-status</code></p>
+<p>在确认删除后，用下面的命令会将 Powerline 安装在<strong>根目录</strong>里面:</p>
+<p><code>sudo pip install powerline-status</code></p>
+<p>通过 <code>pip show powerline-status</code> 命令，我们可以查到 Powerline 的安装路径(Location) 在 <code><strong>/usr/local/lib/python2.7/site-packages </strong></code> 里，<strong>这个地址非常重要，因为在配置 Poweline 到终端和 vim 的时候还会用到</strong>。<br><br></p>
+<h4 id="第三步：配置-Powerline-到终端"><a href="#第三步：配置-Powerline-到终端" class="headerlink" title="第三步：配置 Powerline 到终端"></a>第三步：配置 Powerline 到终端</h4><p>在安装完 Powerline 之后，Powerline 不会马上出现在终端里，因此我们需要把 Powerline 激活。通过下面两部两步来把 Powerline 配置到自己的终端里:<br><strong>一确认 Powerline 的安装路径</strong>（上图的 Location 后面的路径就是你 Powerline 的安装路径）<br><strong>二 配置 .bash_profile 文件</strong>（mac 默认的配置文件）让终端每次启动的时候自动运行 Powerline 脚本，只需将下面的句子复制到你的 bash_profile 文件里就可以啦：<br><code>. /Powerline安装路径/powerline/bindings/bash/powerline.sh</code><br>需要注意的是最开始的 ‘.’ 和 ‘/powerline/…’ 中间是以空格分开的。还有就是大家的安装路径跟我的可能不一样，所以一定要通过 <code>pip show powerline-status</code> 来确认好自己电脑上 Powerline 的安装路径。<br><br>还有一点要注意的是你可能会在 .profile 或者 .bashrc 文件中配置 Powerline，但是却无法激活它。这可能是因为你的电脑中同时也存在 .bash_profile 文件。Unix 终端会将 .bash_profile 文件作为默认配置文件而不是 .bashrc 或 .profile（我就中招了）。<br><br>在配置完成后，需要重启一下终端，或者在终端里面使用 <code>source .bash_profile</code> 重载。就可以看到酷炫屌炸天的 Powerline 终端界面啦：</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-20ef0157329eb98f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Powerline 效果图2 － 未使用powerline专用字体"><br></div>
+
+<p>咦，我的终端怎么这样，怎么这么多小问号？别担心，<strong>这是因为我们还没有 <a href="https://github.com/powerline/fonts" target="_blank" rel="external">安装 Powerline Font</a> － 专用于 Powerline 主题的字体</strong>。现在点开链接，按步骤安装好 Powerline font 然后在终端设置里把字体设置为以 <strong>Powerline</strong> 结尾的字体就行了：</p>
+<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-51e33ae16a773578.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Powerline font example"><br></div>
+
+<h3 id="第四步：配置-Powerline-到-Vim"><a href="#第四步：配置-Powerline-到-Vim" class="headerlink" title="第四步：配置 Powerline 到 Vim"></a>第四步：配置 Powerline 到 Vim</h3><p>只需要在vim 的配置文件 .vimrc 里面加上以下语句，再重启一下终端就可以啦～</p>
+<pre>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">set rtp+=/usr/local/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh</div><div class="line"></div><div class="line">set nocompatible</div><div class="line">set t_Co=256</div><div class="line"></div><div class="line">let g:minBufExplForceSyntaxEnable = 1</div><div class="line">python from powerline.vim import setup as powerline_setup</div><div class="line">python powerline_setup()</div><div class="line">python del powerline_setup</div><div class="line"></div><div class="line">set laststatus=2</div><div class="line">set guifont=Source\ Code\ Pro\ for\ Powerline:h12</div><div class="line">set noshowmode</div></pre></td></tr></table></figure>
+<p></p></pre><br>如果你在终端文件中找不到   .vimrc 或者.bash_profile 就自己创建一个吧，记得要保存在home 目录里面，也就是 /User/你的用户名目录 下面。<br><p></p>
+<h4 id="P-S"><a href="#P-S" class="headerlink" title="P.S."></a>P.S.</h4><p>如果你不太理解 .bash_profile 或者 .bashrc 之类的配置文件的原理，可以参考这篇文章：<a href="http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html" target="_blank" rel="external">.bash_profile vs .bashrc</a> 再附上 <a href="http://powerline.readthedocs.org/en/master/installation/osx.html" target="_blank" rel="external">Powerline OS X 官方安装教程</a> 供参考。Good luck</p>
+]]></content>
+      
+        <categories>
+            
+            <category> Unix/Linux </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Powerline </tag>
+            
+        </tags>
+        
+    </entry>
+    
+  
+  
+</search>
