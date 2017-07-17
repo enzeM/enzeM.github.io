@@ -111,7 +111,7 @@
 <li>防止SQL注入攻击，安全性高</li>
 </ul>
 </blockquote>
-<p>PreparedStatement对象储存了预编译SQL语句，因此可以高效的反复执行该语句。<br>若清楚表格的参数类型，我们可以使用setXXX(int index, XXX value)的方法传入参若<strong>不清楚</strong>表格的参数类型，我们可以使用<code>setObject()</code>的方法传入参数。接下来，我们在数据库里建一个Employees，然后完成：<em>1）加入新的employee record</em>、<em>2）根据ID找出Employee在Table里记录的讯息</em>。</p>
+<p><code>PreparedStatement</code>对象储存了预编译SQL语句，因此可以高效的反复执行该语句。<br>若清楚表格的参数类型，我们可以使用<code>setXXX(int index, XXX value)</code>的方法传入参数。若<strong>不清楚</strong>表格的参数类型，我们可以使用<code>setObject()</code>的方法传入参数。接下来，我们在数据库里建一个Employees，然后完成：<em>0）加入新的employee record</em>、<em>2）根据ID找出Employee在Table里记录的讯息</em>。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Employees (</div><div class="line">	<span class="keyword">ID</span> <span class="built_in">INT</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</div><div class="line">	<span class="keyword">Name</span> <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">	Occupation <span class="built_in">VARCHAR</span>(<span class="number">255</span>),</div><div class="line">	Salary <span class="built_in">VARCHAR</span>(<span class="number">255</span>)</div><div class="line">)</div></pre></td></tr></table></figure>
 <ul>
 <li><em>加入新的employee record:</em></li>
