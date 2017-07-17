@@ -66,29 +66,26 @@
 </tr>
 </tbody>
 </table>
-<h2 id="JDBC-编程步骤"><a href="#JDBC-编程步骤" class="headerlink" title="JDBC 编程步骤"></a>JDBC 编程步骤</h2><ol>
-<li><p>加载数据库驱动: <code>Class.forName(“com.mysql.jdbc.Driver”);</code></p>
+<h2 id="JDBC-编程步骤"><a href="#JDBC-编程步骤" class="headerlink" title="JDBC 编程步骤"></a>JDBC 编程步骤</h2><ul>
+<li><p>Step1 加载数据库驱动:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- Class.forName(&quot;com.mysql.jdbc.Driver&quot;);</div></pre></td></tr></table></figure>
 </li>
-<li><p>通过<code>DriverManager</code>获取数据库连接，获得<code>Connection</code>对象：<br><code>jdbc:mysql://hostname:port/databasename</code></p>
+<li><p>Step2 通过DriverManager获取数据库连接，获得Connection对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- jdbc:mysql://hostname:port/databasename</div></pre></td></tr></table></figure>
 </li>
-<li><p>通过<code>Connection</code>对象创建<code>Statement</code>对象</p>
+<li><p>Step3 通过Connection对象创建Statement对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- 使用getStatement()、 prepareStatement()、prepareCall()等方法</div></pre></td></tr></table></figure>
 </li>
-<li><p>使用<code>Statement</code>对象执行SQL语句</p>
-<ul>
-<li><code>execute()</code> 可执行任何SQL语句</li>
-<li><code>executeUpdate()</code> 用于执行DML和DDL语句。在执行DML语句返回受影响行数，执行DDL语句返回0。</li>
-<li><code>executeQuery()</code> 只执行查询语句，返回ResultSet对象</li>
+<li><p>Step4 使用Statement对象执行SQL语句:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">- execute()可执行任何SQL语句。 </div><div class="line">- executeUpdate()用于执行DML和DDL语句。在执行DML语句返回受影响行数，执行DDL语句返回0。</div><div class="line">- executeQuery()只执行查询语句，返回ResultSet对象。</div></pre></td></tr></table></figure>
+</li>
+<li><p>Step5 操作结果集:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- 程序可通过 next(), previous(), first(), last(), beforeFirst(), beforeLast(), afterLast(), absolute()等方法移动记录指针。 </div><div class="line">- 通过getXXX(column index)获取记录指针指向行、列的值。</div></pre></td></tr></table></figure>
+</li>
+<li><p>Step6 回收数据库资源: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- 关闭ResultSet、Statement、Connection等资源。</div></pre></td></tr></table></figure>
+</li>
 </ul>
-</li>
-<li><p>操作结果集</p>
-<ul>
-<li>程序可通过 <code>next()</code>, <code>previous()</code>, <code>first()</code>, <code>last()</code>, <code>beforeFirst()</code>, <code>beforeLast()</code>, <code>afterLast()</code>, <code>absolute()</code>等方法移动记录指针</li>
-<li>通过<code>getXXX(column index)</code>获取记录指针指向行、列的值。</li>
-</ul>
-</li>
-<li><p>回收数据库资源：关闭<code>ResultSet</code>、<code>Statement</code>、<code>Connection</code>等资源。</p>
-</li>
-</ol>
 <h3 id="1-用Properties类来加载属性文件"><a href="#1-用Properties类来加载属性文件" class="headerlink" title="1. 用Properties类来加载属性文件"></a>1. 用Properties类来加载属性文件</h3><h4 id="1-1-属性文件格式"><a href="#1-1-属性文件格式" class="headerlink" title="1.1 属性文件格式"></a>1.1 属性文件格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">drv = com.mysql.jdbc.Driver</div><div class="line">url = jdbc:mysql://hostname:port/databasename</div><div class="line">usr = username</div><div class="line">pwd = password</div></pre></td></tr></table></figure>
 <p>例如下面的配置建立的连接会占用电脑的5555端口，生成一个people_list数据库的<code>Connection</code>对象，我们把这个配置文件命名为<code>mysql.ini</code>并将其放置在项目的根目录中：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">drv = com.mysql.jdbc.Driver</div><div class="line">url = jdbc:mydql://127.0.0.1:3306/people_list</div><div class="line">usr = enzeM</div><div class="line">pwd = 1234567</div></pre></td></tr></table></figure>
