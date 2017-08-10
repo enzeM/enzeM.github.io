@@ -69,7 +69,7 @@
     
     <entry>
       <title><![CDATA[用BitBucket管理Hexo]]></title>
-      <url>/2017/07/20/bitbucket-hexo/</url>
+      <url>/2017/07/20/2017-Jul-bitbucket-hexo/</url>
       <content type="html"><![CDATA[<p>最近重装了电脑，于是把需要备份的资料进行备份，考虑到配置的隐私问题，我把Hexo博客托管到<a href="https://bitbucket.org" target="_blank" rel="external">Bitbucket</a>上。折腾了半天，也终于把Hexo架到了新装好的电脑上。在此记下，避免日后再次入坑：</p>
 <h4 id="0-安装npm"><a href="#0-安装npm" class="headerlink" title="0 安装npm"></a>0 安装npm</h4><h4 id="1-重新搭建Hexo环境："><a href="#1-重新搭建Hexo环境：" class="headerlink" title="1 重新搭建Hexo环境："></a>1 重新搭建Hexo环境：</h4><ul>
 <li>复制你的Hexo repo</li>
@@ -107,7 +107,7 @@
     
     <entry>
       <title><![CDATA[JDBC 编程学习笔记]]></title>
-      <url>/2017/07/15/jdbc/</url>
+      <url>/2017/07/15/2017-Jul-jdbc/</url>
       <content type="html"><![CDATA[<p>这篇文章是我对李刚老师的《疯狂Java讲义》第三版第十三章：MySQL 数据库与JDBC编程的学习总结。适合有一定SQL基础的同学，如果你还不是很了解SQL，建议去: <a href="https://www.w3schools.com/sql/default.asp" target="_blank" rel="external">w3school</a> 熟悉一下SQL的概念和基本语法。本文更专注于数据库在Java程序中的实践。</p>
 <h2 id="SQL语句基础"><a href="#SQL语句基础" class="headerlink" title="SQL语句基础"></a>SQL语句基础</h2><table>
 <thead>
@@ -323,7 +323,7 @@
     
     <entry>
       <title><![CDATA[像打咏春一样使用Vim]]></title>
-      <url>/2016/04/30/vim-wingchun/</url>
+      <url>/2016/04/30/2016-Apr-vim-wingchun/</url>
       <content type="html"><![CDATA[<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-5334967071a76020.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图片源自网络"><br></div>
 
 <blockquote>
@@ -683,7 +683,7 @@
     
     <entry>
       <title><![CDATA[用Powerline美化你的mac终端]]></title>
-      <url>/2016/04/02/mac-powerline/</url>
+      <url>/2016/04/02/2016-Apr-mac-powerline/</url>
       <content type="html"><![CDATA[<div align="center"><br><img src="http://upload-images.jianshu.io/upload_images/1816409-70951021c362540a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Powerline 效果图1"><br></div>
 
 <p>我用 Mac 编程，平时用 vim 作为编辑器写代码。时间长了，觉得终端和 vim 的主题单调了点儿，从哥们儿 Seven 那儿知道了 Powerline 这个用 Python 写的脚本可以美化终端，于是便安装着试试，结果倒是碰了不少壁。最后还是从 Seven 那知道了 Powerline 有效的安装方法，在此特别鸣谢，也决定向用 Mac 的朋友们分享一下。好啦废话不说，先秀一张Powerline 效果图，然后看看我是怎么做的吧。</p>
