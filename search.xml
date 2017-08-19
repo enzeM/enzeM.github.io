@@ -3,6 +3,204 @@
   
     
     <entry>
+      <title><![CDATA[二叉树学习与实现(Binary Search Tree)]]></title>
+      <url>/2017/08/10/2017-Aug-bst/</url>
+      <content type="html"><![CDATA[<p>二叉树，也叫二叉搜索树，是经典的数据结构。大学的时候没有好好学，没想到天朝面试对数据结构和算法这一块情有独钟，于是不得不重温一下这些知识。在Udemy上报了一个课程，几堂课看下来觉得数据结构还是很有意思，很值得推敲的。<br><a id="more"></a></p>
+<h3 id="1-二叉树的基本原理"><a href="#1-二叉树的基本原理" class="headerlink" title="1 二叉树的基本原理"></a>1 二叉树的基本原理</h3><p><img src="bst_structure.png" alt="二叉树的结构"></p>
+<ul>
+<li>如图二叉树就是最多有两个儿子（children）的节点（node）这有点儿像现在的二胎政策。</li>
+<li>这两个儿子通常被称为左节点（left node）和右节点（right node）。</li>
+<li>没有爹的节点叫做根节点，因为它是最先插入的节点，后续插入的数据以根节点为起点插入。</li>
+<li>没有儿子的节点叫做叶节点（leave node），它们处于二叉树每条分支往下可到达的边缘处。</li>
+<li>每个节都有自己的身家（data），二叉树根据身价的大小来决定此节点放置的位置。</li>
+<li>身价小于当前节点放置于左，否则（身价大于等于当前节点）的放置于右。</li>
+<li>二叉树也有身高（叫做度 Degree）根节点不算身高（Degree 0）往下每叠加一层，身高加上1。</li>
+</ul>
+<h3 id="2-二叉树的功能／特性"><a href="#2-二叉树的功能／特性" class="headerlink" title="2 二叉树的功能／特性"></a>2 二叉树的功能／特性</h3><ul>
+<li>遍历（traverse）：根据相应的顺序递归遍历二叉树的所有节点</li>
+<li>插入（insert）：根据数据的大小从根节点开始插入数据</li>
+<li>删除（delete）：删除拥有相应数据的节点</li>
+<li>最大值（max）：找出二叉树中的最大值</li>
+<li>最小值（min）：找出二叉树中的最小值</li>
+</ul>
+<h4 id="2-1-二叉树的遍历"><a href="#2-1-二叉树的遍历" class="headerlink" title="2.1 二叉树的遍历"></a>2.1 二叉树的遍历</h4><ul>
+<li>分为先序遍历（pre-order traversal）、中序遍历（in-order traversal）和后续遍历（post-order traversal）</li>
+<li>先序遍历：先老子（访问跟节点），然后左儿子（先序遍历左子树），最后右儿子（先序遍历右子树）</li>
+<li>中序遍历：先左儿子（中序遍历左子树），然后老子（访问跟节点），最后右儿子（中序遍历右子树）</li>
+<li>后续遍历：先左儿子（中序遍历左子树），然后右儿子（中序遍历右子树），最后老子（访问根节点）</li>
+</ul>
+<p><img src="bst_traversal.png" alt="二叉树遍历例子"></p>
+<ul>
+<li><p>用上图为例，三种遍历的结果为： </p>
+<pre>
+  先序遍历：6，3，2，1，4，7，8
+  中序遍历：1，2，3，4，6，7，8
+  后序遍历：1，2，4，3，8，7，6
+</pre>
+</li>
+<li><p>二叉树的遍历有什么意义呢？</p>
+</li>
+<li>根据知乎上的回答：先序可以很方便地形成一条搜索路径，中序遍历BST的时候可以得到一个有序序列，后序可以用来计算一颗算数表达式树。</li>
+<li>根据上面的例子反馈<strong>中序遍历</strong>最容易看出来，便是根据二叉树数据结构中自动排序的特点，以节点的大小顺序遍历二叉树。<strong>先序遍历</strong>是以类似于深度优先的方式从左子树到右子树遍历二叉树的每一个节点。<strong>后序遍历</strong>的特点符合普通数学算数式的特点，左右两个子节点存放值或者子算数式，根节点和每一个父节点储存算术表达式（如+，-，*，／）这样通过一次后序遍历就可以算出算术表达式的值。</li>
+</ul>
+<h4 id="2-2-二叉树的插入"><a href="#2-2-二叉树的插入" class="headerlink" title="2.2 二叉树的插入"></a>2.2 二叉树的插入</h4><ul>
+<li>二叉树在执行插入的时候，新的节点只能存放在位置为空的地方。</li>
+<li>然后根据二叉树的基本原理，比当前节点小的放置在左子节点处，反之放置在右节点处。</li>
+</ul>
+<p><img src="bst_insert.png" alt="二叉树插入例子"></p>
+<p>如上图所示，我们先插入一个值为1的节点，根节点是6（非空）所以要对插入节点的值与根节点的值来决定新插入的节点要放在根节点的左子树还是右子树中。根据二叉树左小右大的基本原理节点1要放在右子树，但是右子树已经有了节点2（非空），那需要继续对比节点的值来决定节点1插入的位置。直到即将插入的位置为空时插入过程才结束。经过对比节点1应该插入到节点2的左节点处。同理，节点4应该插入到节点2的右节点处。</p>
+<h4 id="2-3-二叉树的删除"><a href="#2-3-二叉树的删除" class="headerlink" title="2.3 二叉树的删除"></a>2.3 二叉树的删除</h4><p>二叉树的删除有三种情况：</p>
+<p><img src="bst_delete_1.png" alt="删除没有儿子的节点"></p>
+<p><em>情况一：</em>删除的节点没有儿子，我们直接将此节点删除（设为null）</p>
+<p><img src="bst_delete_2.png" alt="删除有一个儿子的节点"></p>
+<p><em>情况二：</em> 删除的节点有一个儿子，我们首先要把它的孩子过继给他的父节点，然后再将其删除</p>
+<p><img src="bst_delete_3.png" alt="删除有两个儿子的节点"></p>
+<p><em>情况三：</em>删除的节点有两个儿子，我们首先将此节点与他的successor或predecessor的数据（data）互换，然后删掉它的successor或predecessor。successor指的是删除节点左节点树中最大的节点。而predecessor指的是删除节点又节点树中最小的节点。</p>
+<h4 id="2-4-二叉树的最大值和最小值"><a href="#2-4-二叉树的最大值和最小值" class="headerlink" title="2.4 二叉树的最大值和最小值"></a>2.4 二叉树的最大值和最小值</h4><p>根据二叉树的特点：</p>
+<ul>
+<li>二叉树的最小值总是处于树的最左侧</li>
+<li>二叉树的最大值总是处于树的最右侧</li>
+</ul>
+<h3 id="为什么使用二叉树？"><a href="#为什么使用二叉树？" class="headerlink" title="为什么使用二叉树？"></a>为什么使用二叉树？</h3><ul>
+<li>二叉树在执行插入时就已经进行了排序，不需要额外的算法去执行排序。</li>
+<li>二叉树在平衡的状态下的增删查减的时间复杂度都为O(log(n))/O(log2(n)，效率很不错哦。至于为什么是相对平衡的状态下表现才好呢？假设你有一个二叉树，你依次插入数据为1，2，3，4的节点，那么此二叉树的形状跟一个链表（link list）是一样的。如果我们要查找一个数据，我们需要遍历整个二叉树，如果我们有N个节点，它的时间复杂度就变成了O(n)。根据链表的结构特点，在执行插入和删除动作的时候，它的时间复杂度为O(1)。那么二叉树在平衡状态下为什么又是O(log(n))呢？我们想象一下，当一个二叉树平衡分布的时候，根据二叉树的排列特点我们对其进行相应的增删查动作时，都只需要遍历一半（想想二分法）因为遍历节点的数量与总节点的规模n的比例为log2(n)，所以其时间复杂度也为log2(n)。（看来我还需要研究一下时间复杂度）</li>
+</ul>
+<h3 id="二叉树的性能总结"><a href="#二叉树的性能总结" class="headerlink" title="二叉树的性能总结"></a>二叉树的性能总结</h3><h4 id="Average-Case"><a href="#Average-Case" class="headerlink" title="Average Case"></a>Average Case</h4><table>
+<thead>
+<tr>
+<th style="text-align:center">Access</th>
+<th style="text-align:center">Search</th>
+<th style="text-align:center">Insert</th>
+<th style="text-align:center">Delete</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">O(log(n)</td>
+<td style="text-align:center">O(log(n)</td>
+<td style="text-align:center">O(log(n)</td>
+<td style="text-align:center">O(log(n)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Worse-Case"><a href="#Worse-Case" class="headerlink" title="Worse Case"></a>Worse Case</h4><table>
+<thead>
+<tr>
+<th style="text-align:center">Access</th>
+<th style="text-align:center">Search</th>
+<th style="text-align:center">Insert</th>
+<th style="text-align:center">Delete</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">O(n)</td>
+<td style="text-align:center">O(n)</td>
+<td style="text-align:center">O(n)</td>
+<td style="text-align:center">O(n)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="二叉树的实现"><a href="#二叉树的实现" class="headerlink" title="二叉树的实现"></a>二叉树的实现</h3><p><img src="bst_uml.png" alt="BST实现类图"></p>
+<ul>
+<li>Tree 接口：定义树的基本功能／特性，包括遍历、增、删、查、最大／最小值。</li>
+<li>Node 类：定义每一个节点所具备的属性，如数据、左节点、右节点。</li>
+<li>BinarySearchTree 类：继承Tree接口，对二叉树的每个功能进行具体实现。</li>
+<li>App 类：测试类。</li>
+</ul>
+<p>(to be continue)</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> Data Structure </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[关于异常的思考]]></title>
+      <url>/2017/07/30/2017-Jul-think-in-exception/</url>
+      <content type="html"><![CDATA[<blockquote>
+<p>异常，让程序有更好的容错性，并分离了错误处理代码与逻辑实现代码</p>
+</blockquote>
+<h3 id="异常处理的目的："><a href="#异常处理的目的：" class="headerlink" title="异常处理的目的："></a>异常处理的目的：</h3><ul>
+<li>使程序代码混乱最小化</li>
+<li>捕获保留异常讯息</li>
+<li>通知合适的人员处理相应异常</li>
+<li>采用合适的方式结束异常活动<a id="more"></a>
+</li>
+</ul>
+<h3 id="异常处理的使用规范："><a href="#异常处理的使用规范：" class="headerlink" title="异常处理的使用规范："></a>异常处理的使用规范：</h3><ul>
+<li><p>先小后大，先处理子类异常，在处理父类异常。</p>
+</li>
+<li><p>异常代码结构：</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	<span class="comment">//逻辑实现代码</span></div><div class="line">&#125; <span class="keyword">catch</span>(ExceptionName e) &#123;</div><div class="line">	<span class="comment">//异常处理代码</span></div><div class="line">&#125; <span class="keyword">finally</span> &#123;</div><div class="line">	<span class="comment">//回收被打开的物理资源，如数据库连接、网络连接、读取磁盘文件等。</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>增强try 代码结构：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span>(</div><div class="line">	<span class="comment">//资源调用代码，运行完try块后自动关闭资源</span></div><div class="line">) &#123;</div><div class="line">	<span class="comment">//逻辑实现代码</span></div><div class="line">&#125; <span class="keyword">catch</span>(ExceptionName e) &#123;</div><div class="line">	<span class="comment">//异常处理代码</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>增强try的好处是省略了finally块来处理需要关闭的资源，在try里的资源会在try块运行结束或捕获异常后关闭。</p>
+<ul>
+<li>异常结构使用总结：</li>
+</ul>
+<pre>
+try 警官专抓异常
+出行带着catch 探员和finally 探员
+catch 探员负责定罪
+finally 探员负责善后
+catch finally 有时齐出动
+有时带其中一个便够
+两个都不带也行
+函数签名带上throws
+增强 try警官很好用
+自带finally 防疏漏
+</pre>
+
+<h3 id="不要滥用异常："><a href="#不要滥用异常：" class="headerlink" title="不要滥用异常："></a>不要滥用异常：</h3><ul>
+<li>别try 普通的业务代码（不会抛出异常的代码）</li>
+<li>别用try 取代负责业务逻辑的if 和 else 小兄弟。（杀鸡用牛刀：异常的性能比if else 差）</li>
+<li>别把try 块踹成一个胖子（避免使用庞大的try块）</li>
+<li>不要乱抓人！（尽量不要使用catch all语句）</li>
+</ul>
+<p>（以下参考王垠的<a href="http://www.yinwang.org/blog-cn/2015/11/21/programming-philosophy" target="_blank" rel="external">编程的智慧</a>，非常好的一篇文章 和 《疯狂Java讲义》第十章关于异常处理)</p>
+<h3 id="正确使用异常："><a href="#正确使用异常：" class="headerlink" title="正确使用异常："></a>正确使用异常：</h3><ol>
+<li>道不同不相为谋，异常要各try 各的(不同的异常情况要分开try，不要潦草的用一个Exception捕获所有异常）</li>
+<li>抓我要有明确证据（尽量减少try 块的内容，尽量分离与异常无关的代码）</li>
+<li>抓我就要对我负责啊（调试的时候print 异常，调试完毕后要对异常进行相应处理</li>
+<li>抓我也得选对地方吧（在合理的Layer 处理异常）</li>
+<li>不要把我丢给不相关的人（在需要的地方进行异常转译）</li>
+</ol>
+<h3 id="案例分析："><a href="#案例分析：" class="headerlink" title="案例分析："></a>案例分析：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">Properties p = Properties();	</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	p.load(<span class="keyword">new</span> FileInputStream(<span class="string">"sql_config.txt"</span>);</div><div class="line">&#125; <span class="keyword">catch</span>(IOException e) &#123;</div><div class="line">	e.printStackTrace();</div><div class="line">&#125;</div><div class="line"></div><div class="line">String drv = p.getProperty(<span class="string">"drv"</span>);</div><div class="line">String url = p.getProperty(<span class="string">"url"</span>);</div><div class="line">String usr = p.getProperty(<span class="string">"usr"</span>);</div><div class="line">String pwd = p.getProperty(<span class="string">"pwd"</span>);</div><div class="line"></div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	Class.forName(drv);</div><div class="line">&#125; <span class="keyword">catch</span>(ClassNotFoundException e) &#123;</div><div class="line">	e.printStackTrace();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	Connection conn = DriverManager.getConnection(url, usr, pwd);</div><div class="line">&#125; <span class="keyword">catch</span>(SQLException e) &#123;</div><div class="line">	e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的例子示范了JDBC 数据库的连接过程，此处有不同的异常情况，第一个try 块里检测的是有没有<code>sql_config.txt</code>这个文件，第二个try 块里检测了程序是否成功加载了SQL 驱动，第三个try 块检测了是否通过DriverManager 成功生成了Connection 实例。三个try 块分别检测了不同的异常类型，这样才达到了捕获异常的目的。千万不要用Exception 来捕获所有的异常，因为Exception 是所有异常的父类，如果一有任何异常出现就会抛出异常，而不会按代码想要catch 的异常类型检查相应异常，于是难以定位异常发生的地点以及类型，便也失去了使用异常的意义）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">Properties p = Properties();	</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	p.load(<span class="keyword">new</span> FileInputStream(<span class="string">"sql_config.txt"</span>);</div><div class="line"></div><div class="line">	<span class="comment">//业务代码没有分离</span></div><div class="line">	String drv = p.getProperty(<span class="string">"drv"</span>);</div><div class="line">	String url = p.getProperty(<span class="string">"url"</span>);</div><div class="line">	String usr = p.getProperty(<span class="string">"usr"</span>);</div><div class="line">	String pwd = p.getProperty(<span class="string">"pwd"</span>);</div><div class="line"></div><div class="line">	Class.forName(drv);</div><div class="line"></div><div class="line">	Connection conn = DriverManager.getConnection(url, usr, pwd);</div><div class="line"></div><div class="line"><span class="comment">//捕获多个异常</span></div><div class="line">&#125; <span class="keyword">catch</span>(IOException e1) &#123;</div><div class="line">	e1.printStackTrace();</div><div class="line">&#125; <span class="keyword">catch</span>(ClassNotFoundException e2) &#123;</div><div class="line">	e2.printStackTrace();</div><div class="line">&#125; <span class="keyword">catch</span>(SQLException e3) &#123;</div><div class="line">	e3.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的例子把三个try 块的内容放在一起，用catch 来捕获多个异常。这里有一部分的业务代码被放置在try 块里面，没有做到分离普通的业务代码和可能出现异常的代码，有碍迅速定位异常的位置。捕获多个异常的原理是如果try 块出现异常，运行时环境会将异常与catch 块中的异常类型逐一比较，最后抛出相应的异常类型。抛出多个异常的方法在程序不是特别复杂的情况下可以使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">Properties p = Properties();	</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">	p.load(<span class="keyword">new</span> FileInputStream(<span class="string">"sql_config.txt"</span>);</div><div class="line"></div><div class="line">	<span class="comment">//业务代码没有分离</span></div><div class="line">	String drv = p.getProperty(<span class="string">"drv"</span>);</div><div class="line">	String url = p.getProperty(<span class="string">"url"</span>);</div><div class="line">	String usr = p.getProperty(<span class="string">"usr"</span>);</div><div class="line">	String pwd = p.getProperty(<span class="string">"pwd"</span>);</div><div class="line"></div><div class="line">	Class.forName(drv);</div><div class="line"></div><div class="line">	Connection conn = DriverManager.getConnection(url, usr, pwd);</div><div class="line"></div><div class="line"><span class="comment">//捕获多个异常</span></div><div class="line">&#125; <span class="keyword">catch</span>(Exception e) &#123;</div><div class="line">	<span class="comment">//不处理异常</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码有两个问题，一是没有对要捕获的异常类型进行明确的分类检查，这样会难以定位异常。第二点是没有对异常进行任何处理，如果发生任何异常并不进行任何处理，会极度影响系统调试，也会为系统安全和代码健壮性埋下隐患。在代码调试的阶段可以使用<code>printStackTrace()</code>通过打印异常栈来debug。但是当程序完成后，要对相应的异常进行具体处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">login</span><span class="params">(String username, String password)</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">//use isValidInput function to validate user input</span></div><div class="line">	String loginQuery = <span class="string">"select * from Users where username=? and password=?"</span>;</div><div class="line"></div><div class="line">	<span class="keyword">try</span> &#123;</div><div class="line">		Connection conn = getConnection(); </div><div class="line">		PreparedStatement pstmt = conn.prepareStatement(loginQuery);</div><div class="line">		ResultSet rs = pstmt.executeQuery();</div><div class="line">		pstmt.setString(<span class="number">1</span>, username);</div><div class="line">		pstmt.setString(<span class="number">2</span>, password);</div><div class="line"></div><div class="line">		<span class="comment">//找到相应用户</span></div><div class="line">		<span class="keyword">if</span>(rs.next()) &#123;</div><div class="line">			<span class="comment">//转到用户界面</span></div><div class="line">		&#125;</div><div class="line">	&#125; <span class="keyword">catch</span> (SQLException e) &#123;</div><div class="line">		<span class="comment">//具体异常处理：通过弹出提示窗给用户</span></div><div class="line">		JOptionPane.showMessageDialog(<span class="keyword">new</span> JFrame()</div><div class="line">				, <span class="string">"incorrect username/password"</span></div><div class="line">				, <span class="string">"login error"</span></div><div class="line">				, JOptionPane.ERROR_MESSAGE);</div><div class="line">	&#125; <span class="keyword">finally</span> &#123;</div><div class="line">		pstmt.close();</div><div class="line">		conn.close();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码为捕获的异常进行了具体的处理，通过弹出错误窗口的方式提醒用户操作失败。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> Programming </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Java </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[在Mac中用pathogen和Git管理Vim插件]]></title>
       <url>/2017/07/22/2017-Jul-pathogen-github-vim/</url>
       <content type="html"><![CDATA[<p>当你的Vim命令比较熟了，你总是想尝试一些新的东西。折腾各种各样的Vim插件便成了那几天最愉快的消遣。Vim就好像一个充满各种插口的超级玩具，你总能组合出属于自己的那款。但有时候不得不说在配置Vim的时候的时间开销是很大的。所以使用Git这样的工具来托管你的Vim插件是一个很好的选择。Vim的插件管理方案有许多，比如<a href="https://github.com/tpope/vim-pathogen" target="_blank" rel="external">pathogen</a>和<a href="https://github.com/VundleVim/Vundle.vim" target="_blank" rel="external">Vundle</a>。我选择了pathogen，因为恰巧先读了一片关于用pathogen配置Vim的文章罢了，好了废话少说，我们进入主题。</p>
@@ -79,21 +277,25 @@
 <li>在repo路径中重新搭建Hexo环境</li>
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install hexo --save</div><div class="line">npm install hexo server --save</div><div class="line">npm install</div></pre></td></tr></table></figure>
+<p><code>npm install</code>是<strong>非常重要</strong>的，因为要在Hexo路径里面生成新的node环境，否则会出现<strong>can not find /GET</strong>的大白页面。</p>
 <ul>
-<li><code>npm install</code>是<strong>非常重要</strong>的，因为要在Hexo路径里面生成新的node环境，否则会出现<strong>can not find /GET</strong>的大白页面。</li>
+<li>添加其他相关的插件：</li>
 </ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install hexo-asset-image --save</div></pre></td></tr></table></figure>
+<p>hexo-asset-image 是一个很好用的图片管理插件，每次创建博客的时候会相应的创建一个与博文名同名的文件，在文件里放置图片，然后直接使用markdown图片链接语法 + 文件里的图片名就可以使用了。在使用前必须保证 <code>_config.yml</code>里面的<code>post_asset_folder</code>配置为<em>true</em>。</p>
 <h4 id="2-重新下载Theme（也许可以用git的submodule功能取代）"><a href="#2-重新下载Theme（也许可以用git的submodule功能取代）" class="headerlink" title="2 重新下载Theme（也许可以用git的submodule功能取代）"></a>2 重新下载Theme（也许可以用git的submodule功能取代）</h4><ul>
-<li><p>我使用的主题是<a href="https://github.com/tufu9441/maupassant-hexo" target="_blank" rel="external">maupassant</a> 所以要在<code>theme/</code>路径复制以下代码：</p>
+<li>我使用的主题是<a href="https://github.com/tufu9441/maupassant-hexo" target="_blank" rel="external">maupassant</a> 所以要在<code>theme/</code>路径复制以下代码：</li>
+</ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">clone https://github.com/tufu9441/maupassant-hexo.git themes/maupassant</div></pre></td></tr></table></figure>
-</li>
-<li><p>maupassant主题的配置需要在其目录中的<code>_config.yml</code>文件完成。我在<code>theme/</code>路径下放置了一个备份文件夹theme_config.yml来备份主题的配置文件，所以每次就不需要重新修改了直接把备份文件内容传到maupassant主题下的<code>_config.yml</code>里面就好</p>
-</li>
+<ul>
+<li>maupassant主题的配置需要在其目录中的<code>_config.yml</code>文件完成。我在<code>theme/</code>路径下放置了一个备份文件夹theme_config.yml来备份主题的配置文件，所以每次就不需要重新修改了直接把备份文件内容传到maupassant主题下的<code>_config.yml</code>里面就好</li>
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">less theme_config.yml &gt; maupassant/_config.yml</div></pre></td></tr></table></figure>
 <ul>
 <li>剩下的就是安装主题需要的插件:</li>
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install hexo-renderer-jade@0.3.0 --save</div><div class="line">npm install hexo-renderer-sass --save</div><div class="line">npm install hexo-generator-search --save</div></pre></td></tr></table></figure>
+<h4 id="3-处理本地npm及相关modules不兼容问题"><a href="#3-处理本地npm及相关modules不兼容问题" class="headerlink" title="3 处理本地npm及相关modules不兼容问题"></a>3 处理本地npm及相关modules不兼容问题</h4><p>由于npm或其他module版本不一样，可能导致弹出一些异常，可以通过删除<code>node_modules/</code>文件夹然后使用<code>npm i</code>命令重新安装一下本地的npm，通常情况下可以解决一些module不兼容的问题。</p>
 ]]></content>
       
         
